@@ -1,0 +1,931 @@
+/* =====================================================================
+   FIELD NOTES — an Obsidian theme
+   Pocket-notebook styling: kraft cover stock, graph-ruled pages,
+   geometric sans headings and black "ink" body text.
+
+   Tuned for iPhone first, including foldable iPhones:
+     • Folded (narrow) screen  -> full-bleed graph page, kraft header band
+     • Unfolded (wide) screen  -> the page becomes a sheet lying on the
+                                  open cover; side-by-side panes read as an
+                                  open notebook with a stapled spine
+   Works on iPad and desktop too.
+
+   Not affiliated with or endorsed by Field Notes Brand.
+   ===================================================================== */
+
+/* @settings
+
+name: Field Notes
+id: field-notes-theme
+settings:
+    -
+        id: fn-paper
+        title: Page ruling
+        description: The pattern printed on every page
+        type: class-select
+        allowEmpty: false
+        default: fn-paper-graph
+        options:
+            -
+                label: Graph
+                value: fn-paper-graph
+            -
+                label: Ruled
+                value: fn-paper-ruled
+            -
+                label: Dot grid
+                value: fn-paper-dot
+            -
+                label: Blank
+                value: fn-paper-blank
+    -
+        id: fn-grid
+        title: Grid size
+        description: Spacing of the ruling. Match it to your line height (font size × 1.5) to write on the lines.
+        type: variable-number-slider
+        default: 24
+        min: 16
+        max: 36
+        step: 1
+        format: px
+    -
+        id: fn-cover
+        title: Cover stock
+        description: Colour of the header, toolbars and sidebars
+        type: class-select
+        allowEmpty: false
+        default: fn-cover-kraft
+        options:
+            -
+                label: Kraft
+                value: fn-cover-kraft
+            -
+                label: Black
+                value: fn-cover-black
+            -
+                label: Olive drab
+                value: fn-cover-olive
+            -
+                label: Blue chambray
+                value: fn-cover-blue
+            -
+                label: Fire red
+                value: fn-cover-red
+    -
+        id: fn-ink
+        title: Ink colour
+        description: Used for links, checkboxes, tags and other accents
+        type: class-select
+        allowEmpty: false
+        default: fn-ink-red
+        options:
+            -
+                label: Rubber-stamp red
+                value: fn-ink-red
+            -
+                label: Ballpoint blue
+                value: fn-ink-blue
+            -
+                label: Surveyor green
+                value: fn-ink-green
+            -
+                label: Graphite
+                value: fn-ink-graphite
+    -
+        id: fn-body-font
+        title: Body typeface
+        type: class-select
+        allowEmpty: false
+        default: fn-body-geometric
+        options:
+            -
+                label: Geometric sans (Avenir Next)
+                value: fn-body-geometric
+            -
+                label: All Futura
+                value: fn-body-futura
+            -
+                label: Typewriter
+                value: fn-body-typewriter
+    -
+        id: fn-no-sheet
+        title: Disable sheet-on-cover layout
+        description: On wide screens (unfolded phone, iPad) keep the page full-bleed instead of a sheet lying on the cover
+        type: class-toggle
+        default: false
+    -
+        id: fn-sheet-desktop
+        title: Use sheet-on-cover layout on desktop too
+        type: class-toggle
+        default: false
+    -
+        id: fn-hide-staples
+        title: Hide staples on the spine
+        description: Removes the staples drawn between side-by-side panes
+        type: class-toggle
+        default: false
+    -
+        id: fn-no-texture
+        title: Smooth cover (no paper fibre texture)
+        type: class-toggle
+        default: false
+*/
+
+/* ---------------------------------------------------------------------
+   1. Core tokens
+   --------------------------------------------------------------------- */
+
+body {
+  /* Ruling */
+  --fn-grid: 24px;
+
+  /* Ink accent (rubber-stamp red by default) */
+  --accent-h: 4;
+  --accent-s: 58%;
+  --accent-l: 44%;
+
+  /* Typography */
+  --fn-font-futura: "Futura", "Futura PT", "Jost", "Century Gothic", "Avenir Next", "Avenir", sans-serif;
+  --fn-font-geometric: "Avenir Next", "Avenir", "Futura PT", "Jost", "Nunito Sans", "Segoe UI", sans-serif;
+  --fn-font-typewriter: "American Typewriter", "Courier Prime", "Special Elite", "Courier New", serif;
+  --fn-font-mono: "SF Mono", "Menlo", "Courier Prime", "Courier New", monospace;
+
+  --font-interface-theme: var(--fn-font-futura);
+  --font-text-theme: var(--fn-font-geometric);
+  --font-monospace-theme: var(--fn-font-mono);
+
+  --line-height-normal: 1.5;
+  --line-height-tight: 1.25;
+
+  /* Headings: stencil-plain geometric caps, like a cover label */
+  --heading-spacing: calc(var(--p-spacing) * 1.75);
+  --h1-font: var(--fn-font-futura);
+  --h2-font: var(--fn-font-futura);
+  --h3-font: var(--fn-font-futura);
+  --h4-font: var(--fn-font-futura);
+  --h5-font: var(--fn-font-futura);
+  --h6-font: var(--fn-font-futura);
+  --h1-size: 1.55em;
+  --h2-size: 1.3em;
+  --h3-size: 1.12em;
+  --h4-size: 1em;
+  --h5-size: 0.9em;
+  --h6-size: 0.82em;
+  --h1-weight: 800;
+  --h2-weight: 800;
+  --h3-weight: 700;
+  --h4-weight: 700;
+  --h5-weight: 700;
+  --h6-weight: 700;
+  --h1-letter-spacing: 0.06em;
+  --h2-letter-spacing: 0.05em;
+  --h3-letter-spacing: 0.04em;
+  --h1-line-height: 1.2;
+  --h2-line-height: 1.25;
+  --inline-title-font: var(--fn-font-futura);
+  --inline-title-size: 1.6em;
+  --inline-title-weight: 800;
+  --inline-title-letter-spacing: 0.06em;
+  --inline-title-line-height: 1.15;
+
+  /* Small, crisp corners — it's paper, not plastic */
+  --radius-s: 2px;
+  --radius-m: 3px;
+  --radius-l: 4px;
+  --radius-xl: 6px;
+  --checkbox-radius: 2px;
+  --tag-radius: 2px;
+  --callout-radius: 2px;
+  --code-radius: 2px;
+  --embed-border-start: 2px solid var(--fn-rule-strong);
+
+  /* Pocket margins */
+  --file-line-width: 40rem;
+  --file-margins: var(--size-4-6) var(--size-4-5);
+
+  /* Tags look rubber-stamped */
+  --tag-size: 0.72em;
+  --tag-weight: 700;
+  --tag-padding-x: 0.5em;
+  --tag-padding-y: 0.12em;
+  --tag-background: transparent;
+  --tag-background-hover: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.08);
+  --tag-border-width: 1.5px;
+  --tag-border-color: var(--text-accent);
+  --tag-border-color-hover: var(--text-accent);
+  --tag-color: var(--text-accent);
+  --tag-color-hover: var(--text-accent);
+
+  --checkbox-size: 1.05em;
+  --checkbox-border-color: var(--fn-ink-soft);
+  --checkbox-border-color-hover: var(--text-accent);
+  --checkbox-color: var(--interactive-accent);
+  --checkbox-color-hover: var(--interactive-accent-hover);
+  --checklist-done-decoration: line-through;
+  --checklist-done-color: var(--text-faint);
+
+  --blockquote-border-thickness: 3px;
+  --blockquote-border-color: var(--fn-ink-soft);
+  --hr-thickness: 2px;
+  --hr-color: var(--fn-rule-strong);
+
+  --table-header-font: var(--fn-font-futura);
+  --table-header-weight: 700;
+  --table-border-color: var(--fn-rule-strong);
+
+  /* Kraft fibres (inline SVG noise) */
+  --fn-fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.22 0 0 0 0 0.15 0 0 0 0 0.07 0 0 0 0.55 -0.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --fn-cover-texture: var(--fn-fibre);
+}
+
+body.fn-no-texture {
+  --fn-cover-texture: none;
+}
+
+/* Ink choices */
+body.fn-ink-blue {
+  --accent-h: 218;
+  --accent-s: 62%;
+  --accent-l: 40%;
+}
+body.fn-ink-green {
+  --accent-h: 150;
+  --accent-s: 38%;
+  --accent-l: 32%;
+}
+body.fn-ink-graphite {
+  --accent-h: 30;
+  --accent-s: 6%;
+  --accent-l: 30%;
+}
+
+/* Typeface choices */
+body.fn-body-futura {
+  --font-text-theme: var(--fn-font-futura);
+}
+body.fn-body-typewriter {
+  --font-text-theme: var(--fn-font-typewriter);
+}
+
+/* ---------------------------------------------------------------------
+   2. Light mode — bright white pages, kraft cover
+   --------------------------------------------------------------------- */
+
+.theme-light {
+  --fn-paper: #fbfaf5;
+  --fn-paper-alt: #f3f0e6;
+  --fn-ink: #1d1a16;
+  --fn-ink-soft: #4d463d;
+  --fn-grid-line: rgba(96, 110, 120, 0.2);
+  --fn-grid-dot: rgba(70, 80, 90, 0.42);
+  --fn-rule: rgba(50, 40, 30, 0.14);
+  --fn-rule-strong: rgba(40, 32, 24, 0.38);
+  --fn-sheet-shadow: 0 1px 1px rgba(40, 25, 10, 0.18), 0 6px 18px rgba(40, 25, 10, 0.22);
+
+  /* Cover: kraft */
+  --fn-cover: #c4a175;
+  --fn-cover-deep: #b38e60;
+  --fn-cover-ink: #241a10;
+  --fn-cover-ink-muted: #4f3d29;
+  --fn-cover-ink-faint: #75603f;
+  --fn-cover-hover: rgba(36, 26, 16, 0.1);
+  --fn-cover-active: rgba(36, 26, 16, 0.16);
+
+  --background-primary: var(--fn-paper);
+  --background-primary-alt: var(--fn-paper-alt);
+  --background-secondary: var(--fn-cover);
+  --background-secondary-alt: var(--fn-cover-deep);
+  --background-modifier-border: var(--fn-rule);
+  --background-modifier-border-hover: var(--fn-rule-strong);
+  --background-modifier-border-focus: var(--fn-rule-strong);
+  --background-modifier-hover: rgba(50, 35, 20, 0.07);
+  --background-modifier-active-hover: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.12);
+  --background-modifier-form-field: #ffffff;
+
+  --text-normal: var(--fn-ink);
+  --text-muted: #5a5248;
+  --text-faint: #958b7e;
+  --text-on-accent: #fffaf0;
+  --text-highlight-bg: rgba(255, 214, 64, 0.5);
+  --text-selection: hsla(var(--accent-h), 60%, 55%, 0.2);
+
+  --code-background: var(--fn-paper-alt);
+  --code-normal: #2f2a24;
+  --blockquote-background-color: transparent;
+
+  --titlebar-background: var(--fn-cover);
+  --titlebar-background-focused: var(--fn-cover-deep);
+  --ribbon-background: var(--fn-cover-deep);
+  --ribbon-background-collapsed: var(--fn-cover);
+  --tab-container-background: var(--fn-cover);
+  --status-bar-background: var(--fn-cover);
+}
+
+.theme-light.fn-cover-black {
+  --fn-cover: #26231f;
+  --fn-cover-deep: #1b1916;
+  --fn-cover-ink: #efe8da;
+  --fn-cover-ink-muted: #bdb3a2;
+  --fn-cover-ink-faint: #877d6f;
+  --fn-cover-hover: rgba(255, 245, 225, 0.08);
+  --fn-cover-active: rgba(255, 245, 225, 0.14);
+}
+.theme-light.fn-cover-olive {
+  --fn-cover: #6e6d43;
+  --fn-cover-deep: #5d5c36;
+  --fn-cover-ink: #f3efdc;
+  --fn-cover-ink-muted: #d6d1b2;
+  --fn-cover-ink-faint: #aaa585;
+  --fn-cover-hover: rgba(255, 250, 225, 0.1);
+  --fn-cover-active: rgba(255, 250, 225, 0.16);
+}
+.theme-light.fn-cover-blue {
+  --fn-cover: #557089;
+  --fn-cover-deep: #465f76;
+  --fn-cover-ink: #f1f3f2;
+  --fn-cover-ink-muted: #d0dae2;
+  --fn-cover-ink-faint: #a2b3c1;
+  --fn-cover-hover: rgba(255, 255, 255, 0.1);
+  --fn-cover-active: rgba(255, 255, 255, 0.16);
+}
+.theme-light.fn-cover-red {
+  --fn-cover: #a8372c;
+  --fn-cover-deep: #8f2c23;
+  --fn-cover-ink: #fff3e8;
+  --fn-cover-ink-muted: #f3cdbf;
+  --fn-cover-ink-faint: #d39a8b;
+  --fn-cover-hover: rgba(255, 245, 230, 0.1);
+  --fn-cover-active: rgba(255, 245, 230, 0.17);
+}
+
+/* ---------------------------------------------------------------------
+   3. Dark mode — "night edition": charcoal pages, dark board cover
+   --------------------------------------------------------------------- */
+
+.theme-dark {
+  --accent-l: 62%;
+
+  --fn-paper: #1f1e1b;
+  --fn-paper-alt: #282622;
+  --fn-ink: #ebe5d8;
+  --fn-ink-soft: #b8af9f;
+  --fn-grid-line: rgba(200, 215, 225, 0.075);
+  --fn-grid-dot: rgba(220, 230, 235, 0.2);
+  --fn-rule: rgba(235, 225, 205, 0.12);
+  --fn-rule-strong: rgba(235, 225, 205, 0.3);
+  --fn-sheet-shadow: 0 1px 1px rgba(0, 0, 0, 0.5), 0 8px 22px rgba(0, 0, 0, 0.55);
+
+  /* Cover: kraft, darkened as if seen by lamplight */
+  --fn-cover: #4a3a28;
+  --fn-cover-deep: #3d2f20;
+  --fn-cover-ink: #f0e2cb;
+  --fn-cover-ink-muted: #c9b597;
+  --fn-cover-ink-faint: #957f61;
+  --fn-cover-hover: rgba(255, 235, 200, 0.08);
+  --fn-cover-active: rgba(255, 235, 200, 0.14);
+
+  --background-primary: var(--fn-paper);
+  --background-primary-alt: var(--fn-paper-alt);
+  --background-secondary: var(--fn-cover);
+  --background-secondary-alt: var(--fn-cover-deep);
+  --background-modifier-border: var(--fn-rule);
+  --background-modifier-border-hover: var(--fn-rule-strong);
+  --background-modifier-border-focus: var(--fn-rule-strong);
+  --background-modifier-hover: rgba(255, 240, 215, 0.06);
+  --background-modifier-active-hover: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.16);
+  --background-modifier-form-field: #2a2824;
+
+  --text-normal: var(--fn-ink);
+  --text-muted: #b3aa9b;
+  --text-faint: #7d7568;
+  --text-on-accent: #1a1814;
+  --text-highlight-bg: rgba(240, 190, 40, 0.32);
+  --text-selection: hsla(var(--accent-h), 60%, 60%, 0.25);
+
+  --code-background: var(--fn-paper-alt);
+  --code-normal: #ddd5c6;
+  --blockquote-background-color: transparent;
+
+  --titlebar-background: var(--fn-cover);
+  --titlebar-background-focused: var(--fn-cover-deep);
+  --ribbon-background: var(--fn-cover-deep);
+  --ribbon-background-collapsed: var(--fn-cover);
+  --tab-container-background: var(--fn-cover);
+  --status-bar-background: var(--fn-cover);
+}
+
+.theme-dark.fn-cover-black {
+  --fn-cover: #141311;
+  --fn-cover-deep: #0e0d0c;
+  --fn-cover-ink: #e8e1d3;
+  --fn-cover-ink-muted: #a8a093;
+  --fn-cover-ink-faint: #6f685e;
+}
+.theme-dark.fn-cover-olive {
+  --fn-cover: #3a3a24;
+  --fn-cover-deep: #2f2f1d;
+  --fn-cover-ink: #ecead6;
+  --fn-cover-ink-muted: #c4c1a2;
+  --fn-cover-ink-faint: #8d8a6e;
+}
+.theme-dark.fn-cover-blue {
+  --fn-cover: #2c3a48;
+  --fn-cover-deep: #24303c;
+  --fn-cover-ink: #e6ebef;
+  --fn-cover-ink-muted: #b4c1cc;
+  --fn-cover-ink-faint: #7e8e9b;
+}
+.theme-dark.fn-cover-red {
+  --fn-cover: #5a211c;
+  --fn-cover-deep: #4a1b17;
+  --fn-cover-ink: #f8e4da;
+  --fn-cover-ink-muted: #d9b0a3;
+  --fn-cover-ink-faint: #a87a6d;
+}
+
+/* ---------------------------------------------------------------------
+   4. Page ruling
+   --------------------------------------------------------------------- */
+
+body,
+body.fn-paper-graph {
+  --fn-paper-image:
+    linear-gradient(to bottom, var(--fn-grid-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--fn-grid-line) 1px, transparent 1px);
+  --fn-paper-size: var(--fn-grid) var(--fn-grid);
+}
+body.fn-paper-ruled {
+  --fn-paper-image: linear-gradient(to bottom, transparent calc(var(--fn-grid) - 1px), var(--fn-grid-line) calc(var(--fn-grid) - 1px));
+  --fn-paper-size: 100% var(--fn-grid);
+}
+body.fn-paper-dot {
+  --fn-paper-image: radial-gradient(circle at 1px 1px, var(--fn-grid-dot) 1px, transparent 1.6px);
+  --fn-paper-size: var(--fn-grid) var(--fn-grid);
+}
+body.fn-paper-blank {
+  --fn-paper-image: none;
+}
+
+/* The page itself: reading view and live-preview / source editor.
+   background-attachment: local makes the ruling scroll with the text. */
+.markdown-preview-view,
+.markdown-source-view.mod-cm6 .cm-scroller {
+  background-color: var(--fn-paper);
+  background-image: var(--fn-paper-image);
+  background-size: var(--fn-paper-size);
+  background-attachment: local;
+}
+
+/* Embeds, hover previews and canvas cards stay plain */
+.markdown-embed .markdown-preview-view,
+.markdown-embed .cm-scroller,
+.hover-popover .markdown-preview-view,
+.canvas-node-content .markdown-preview-view,
+.canvas-node-content .cm-scroller {
+  background-image: none;
+  background-color: transparent;
+}
+
+/* ---------------------------------------------------------------------
+   5. Typography & note elements
+   --------------------------------------------------------------------- */
+
+/* Title and top-level headings: all caps, like the cover label */
+.inline-title,
+.markdown-rendered h1,
+.markdown-rendered h2,
+.markdown-rendered h3,
+.markdown-source-view.mod-cm6 .HyperMD-header-1,
+.markdown-source-view.mod-cm6 .HyperMD-header-2,
+.markdown-source-view.mod-cm6 .HyperMD-header-3 {
+  text-transform: uppercase;
+}
+
+.inline-title {
+  padding-bottom: 0.25em;
+  margin-bottom: 0.6em;
+  border-bottom: 3px solid var(--text-normal);
+  box-shadow: 0 2px 0 var(--fn-paper), 0 3px 0 var(--text-normal);
+}
+
+.markdown-rendered h1 {
+  border-bottom: 2px solid var(--text-normal);
+  padding-bottom: 0.1em;
+}
+.markdown-rendered h2 {
+  border-bottom: 1px solid var(--fn-rule-strong);
+  padding-bottom: 0.1em;
+}
+.markdown-rendered h4,
+.markdown-rendered h5,
+.markdown-rendered h6 {
+  color: var(--text-muted);
+}
+
+/* Links: inked, not neon */
+.markdown-rendered a,
+.cm-s-obsidian span.cm-hmd-internal-link,
+.cm-s-obsidian span.cm-link,
+.cm-s-obsidian span.cm-url {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+/* Rubber-stamp tags */
+a.tag,
+.cm-s-obsidian span.cm-hashtag {
+  font-family: var(--fn-font-futura);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-style: solid;
+}
+.cm-s-obsidian span.cm-hashtag {
+  border-width: var(--tag-border-width);
+}
+
+/* Perforation-line horizontal rules */
+.markdown-rendered hr {
+  border: none;
+  border-top: var(--hr-thickness) dashed var(--hr-color);
+}
+.markdown-source-view.mod-cm6 .hr {
+  border-top: none !important;
+}
+.markdown-source-view.mod-cm6 .cm-line hr {
+  border: none;
+  border-top: var(--hr-thickness) dashed var(--hr-color);
+}
+
+/* Square pencil-box checkboxes */
+input[type="checkbox"] {
+  border-width: 1.5px;
+}
+
+/* Blockquotes read like a margin note */
+.markdown-rendered blockquote {
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* Highlights look like a dry highlighter swipe */
+.markdown-rendered mark,
+.cm-s-obsidian span.cm-highlight {
+  padding: 0 0.1em;
+  border-radius: 1px;
+}
+
+/* Code: typewritten slip */
+.markdown-rendered code,
+.cm-s-obsidian span.cm-inline-code {
+  border: 1px solid var(--fn-rule);
+}
+.markdown-rendered pre {
+  border: 1px solid var(--fn-rule);
+  box-shadow: 2px 2px 0 var(--fn-rule);
+}
+.markdown-rendered pre code {
+  border: none;
+}
+
+/* Tables: ledger-ruled */
+.markdown-rendered table {
+  border-collapse: collapse;
+}
+.markdown-rendered th {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85em;
+  border-bottom: 2px solid var(--text-normal);
+}
+.markdown-rendered td,
+.markdown-rendered th {
+  background-color: transparent;
+}
+.markdown-rendered thead tr > th,
+.markdown-rendered tbody tr > td {
+  border-left: none;
+  border-right: none;
+}
+
+/* Callouts: a slip of paper clipped to the page */
+.callout {
+  border: 1.5px solid rgba(var(--callout-color), 0.55);
+  border-left-width: 4px;
+  background-color: rgba(var(--callout-color), 0.07);
+}
+.callout-title {
+  font-family: var(--fn-font-futura);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.9em;
+}
+
+/* Properties block styled like a ledger header */
+.metadata-container {
+  --metadata-label-font: var(--fn-font-futura);
+  --metadata-label-font-size: 0.78em;
+  border-bottom: 1px solid var(--fn-rule-strong);
+  padding-bottom: var(--size-4-2);
+}
+.metadata-property-key {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ---------------------------------------------------------------------
+   6. Chrome = the cover
+   Header bands, toolbars, sidebars and tabs use the cover stock and
+   remap text colours so any cover colour stays legible.
+   --------------------------------------------------------------------- */
+
+.workspace-ribbon,
+.workspace-split.mod-left-split,
+.workspace-split.mod-right-split,
+.workspace-drawer,
+.workspace-tab-header-container,
+.titlebar,
+.status-bar,
+.view-header,
+.mobile-toolbar,
+.mobile-navbar,
+.workspace-drawer-header,
+.workspace-drawer-tab-container,
+.workspace-drawer-active-tab-container,
+.mod-root .workspace-tab-header-container {
+  --text-normal: var(--fn-cover-ink);
+  --text-muted: var(--fn-cover-ink-muted);
+  --text-faint: var(--fn-cover-ink-faint);
+  --icon-color: var(--fn-cover-ink-muted);
+  --icon-color-hover: var(--fn-cover-ink);
+  --icon-color-active: var(--fn-cover-ink);
+  --icon-color-focused: var(--fn-cover-ink);
+  --nav-item-color: var(--fn-cover-ink-muted);
+  --nav-item-color-hover: var(--fn-cover-ink);
+  --nav-item-color-active: var(--fn-cover-ink);
+  --nav-item-color-selected: var(--fn-cover-ink);
+  --nav-collapse-icon-color: var(--fn-cover-ink-faint);
+  --background-modifier-hover: var(--fn-cover-hover);
+  --background-modifier-active-hover: var(--fn-cover-active);
+  --nav-item-background-hover: var(--fn-cover-hover);
+  --nav-item-background-active: var(--fn-cover-active);
+  --nav-item-background-selected: var(--fn-cover-active);
+  --background-modifier-border: rgba(0, 0, 0, 0.18);
+  --tab-text-color: var(--fn-cover-ink-muted);
+  --tab-text-color-focused: var(--fn-cover-ink);
+  --tab-text-color-focused-active: var(--fn-cover-ink);
+  --tab-text-color-focused-active-current: var(--fn-cover-ink);
+  background-color: var(--fn-cover);
+  background-image: var(--fn-cover-texture);
+  color: var(--fn-cover-ink);
+}
+
+/* Form fields inside the cover are white paper: give them back paper ink */
+.workspace-split.mod-left-split input,
+.workspace-split.mod-right-split input,
+.workspace-drawer input,
+.view-header input,
+.mobile-toolbar input {
+  --text-normal: var(--fn-ink);
+  --text-muted: var(--text-faint);
+  color: var(--fn-ink);
+}
+
+/* Content panes inside the cover-coloured sidebars stay cover-coloured */
+.workspace-split.mod-left-split .workspace-leaf-content,
+.workspace-split.mod-right-split .workspace-leaf-content,
+.workspace-drawer .workspace-leaf-content,
+.workspace-split.mod-left-split .view-content,
+.workspace-split.mod-right-split .view-content,
+.workspace-drawer .view-content {
+  background-color: transparent;
+}
+
+/* Interface type: the stencil-ish geometric sans everywhere */
+.view-header-title,
+.nav-folder-title,
+.workspace-tab-header-inner-title,
+.mobile-toolbar,
+.status-bar {
+  font-family: var(--fn-font-futura);
+}
+
+/* Header band title: small caps label on the cover */
+.view-header-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.86em;
+}
+
+/* Sidebar folders read like section dividers */
+.nav-folder-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.82em;
+}
+
+/* Bottom edge of the header band: a sewn/stapled seam */
+.view-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.22);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Active tab = the page peeking out of the cover */
+.workspace-tab-header.is-active {
+  --tab-text-color-focused-active: var(--fn-ink);
+  --tab-text-color-focused-active-current: var(--fn-ink);
+  --icon-color: var(--fn-ink);
+}
+.workspace .mod-root .workspace-tab-header.is-active,
+.workspace-tab-header.is-active::before,
+.workspace-tab-header.is-active::after {
+  --tab-background-active: var(--fn-paper);
+}
+
+/* Mobile toolbar: buttons sit on the cover band */
+.mobile-toolbar {
+  border-top: 1px solid rgba(0, 0, 0, 0.22);
+}
+.mobile-toolbar-option {
+  color: var(--fn-cover-ink);
+}
+
+/* Menus, modals and prompts are paper slips */
+.menu,
+.modal,
+.prompt,
+.suggestion-container,
+.popover {
+  --background-modifier-border: var(--fn-rule-strong);
+  border-radius: var(--radius-m);
+}
+.modal-title,
+.setting-item-heading .setting-item-name {
+  font-family: var(--fn-font-futura);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ---------------------------------------------------------------------
+   7. iPhone — folded (narrow) screen
+   Full-bleed page, comfortable thumb-friendly margins, no wasted chrome.
+   --------------------------------------------------------------------- */
+
+body.is-phone {
+  --file-margins: var(--size-4-4) var(--size-4-4);
+  --inline-title-size: 1.45em;
+  --h1-size: 1.45em;
+  --h2-size: 1.25em;
+}
+
+/* Keep the ruling aligned with the text column, not the screen edge */
+body.is-phone .markdown-preview-view,
+body.is-phone .markdown-source-view.mod-cm6 .cm-scroller {
+  background-position: var(--size-4-4) 0;
+}
+
+/* Larger hit areas for checkboxes when writing with a thumb */
+body.is-mobile .markdown-source-view.mod-cm6 .task-list-item-checkbox,
+body.is-mobile .markdown-rendered .task-list-item-checkbox {
+  --checkbox-size: 1.15em;
+}
+
+/* ---------------------------------------------------------------------
+   8. Unfolded / wide screens — the open notebook
+   The page becomes a sheet laid on the cover; split panes become
+   facing pages with a stapled spine between them.
+   Applies to wide phone screens (an unfolded foldable), iPad, and
+   optionally desktop.
+   --------------------------------------------------------------------- */
+
+@media (min-width: 600px) {
+  body.is-mobile:not(.fn-no-sheet) {
+    --file-margins: var(--size-4-6) var(--size-4-8);
+  }
+}
+
+@media (min-width: 600px) {
+  body.is-mobile:not(.fn-no-sheet) .workspace-split.mod-root .markdown-preview-view,
+  body.is-mobile:not(.fn-no-sheet) .workspace-split.mod-root .markdown-source-view.mod-cm6 .cm-scroller {
+    background-color: var(--fn-cover);
+    background-image: var(--fn-cover-texture);
+    background-size: auto;
+    background-position: 0 0;
+  }
+
+  body.is-mobile:not(.fn-no-sheet) .workspace-split.mod-root .markdown-preview-view .markdown-preview-sizer,
+  body.is-mobile:not(.fn-no-sheet) .workspace-split.mod-root .markdown-source-view.mod-cm6 .cm-sizer {
+    background-color: var(--fn-paper);
+    background-image: var(--fn-paper-image);
+    background-size: var(--fn-paper-size);
+    background-position: var(--size-4-8) 0;
+    box-shadow: var(--fn-sheet-shadow);
+    border-radius: 1px 3px 3px 1px;
+    padding: var(--size-4-8) var(--size-4-8) var(--size-4-12);
+    margin-top: var(--size-4-2);
+    margin-bottom: var(--size-4-8);
+  }
+}
+
+body.fn-sheet-desktop:not(.is-mobile):not(.fn-no-sheet) .workspace-split.mod-root .markdown-preview-view,
+body.fn-sheet-desktop:not(.is-mobile):not(.fn-no-sheet) .workspace-split.mod-root .markdown-source-view.mod-cm6 .cm-scroller {
+  background-color: var(--fn-cover);
+  background-image: var(--fn-cover-texture);
+  background-size: auto;
+  background-position: 0 0;
+}
+body.fn-sheet-desktop:not(.is-mobile):not(.fn-no-sheet) .workspace-split.mod-root .markdown-preview-view .markdown-preview-sizer,
+body.fn-sheet-desktop:not(.is-mobile):not(.fn-no-sheet) .workspace-split.mod-root .markdown-source-view.mod-cm6 .cm-sizer {
+  background-color: var(--fn-paper);
+  background-image: var(--fn-paper-image);
+  background-size: var(--fn-paper-size);
+  background-position: var(--size-4-8) 0;
+  box-shadow: var(--fn-sheet-shadow);
+  border-radius: 1px 3px 3px 1px;
+  padding: var(--size-4-8) var(--size-4-8) var(--size-4-12);
+  margin-top: var(--size-4-2);
+  margin-bottom: var(--size-4-8);
+}
+
+/* The sheet's own cover band: the inline title sits on a double rule */
+body.is-mobile .workspace-split.mod-root .markdown-preview-sizer > .inline-title,
+body.is-mobile .workspace-split.mod-root .cm-sizer > .inline-title {
+  margin-top: 0;
+}
+
+/* Facing pages: side-by-side panes get a spine with staples.
+   (Split panes are available when Obsidian lays the screen out as a tablet,
+   e.g. iPad or a large unfolded display.) */
+.workspace-split.mod-root.mod-vertical > .workspace-tabs:not(:last-child),
+.workspace-split.mod-root.mod-vertical > .workspace-leaf:not(:last-child) {
+  box-shadow: inset -10px 0 12px -10px rgba(0, 0, 0, 0.35);
+}
+.workspace-split.mod-root.mod-vertical > .workspace-tabs:not(:first-child),
+.workspace-split.mod-root.mod-vertical > .workspace-leaf:not(:first-child) {
+  box-shadow: inset 10px 0 12px -10px rgba(0, 0, 0, 0.35);
+}
+.workspace-split.mod-root.mod-vertical > .workspace-tabs:not(:first-child):not(:last-child),
+.workspace-split.mod-root.mod-vertical > .workspace-leaf:not(:first-child):not(:last-child) {
+  box-shadow:
+    inset 10px 0 12px -10px rgba(0, 0, 0, 0.35),
+    inset -10px 0 12px -10px rgba(0, 0, 0, 0.35);
+}
+
+body:not(.fn-hide-staples) .workspace-split.mod-root.mod-vertical > * > .workspace-leaf-resize-handle {
+  background-image:
+    linear-gradient(to bottom,
+      transparent 27%,
+      #9a9a9a 27%, #e2e2e2 27.6%, #9a9a9a 28.2%,
+      #9a9a9a 33%, transparent 33%,
+      transparent 67%,
+      #9a9a9a 67%, #e2e2e2 67.6%, #9a9a9a 68.2%,
+      #9a9a9a 73%, transparent 73%);
+  background-size: 3px 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+}
+
+/* Foldables that expose display segments (Viewport Segments API):
+   draw the spine exactly on the hinge when a single pane spans both halves. */
+@media (horizontal-viewport-segments: 2) {
+  body.is-mobile .workspace-split.mod-root .workspace-leaf-content[data-type="markdown"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(env(viewport-segment-right 0 0) - 1px);
+    width: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0) + 2px);
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.02) 50%, rgba(0, 0, 0, 0.12));
+  }
+}
+
+/* ---------------------------------------------------------------------
+   9. Small finishing touches
+   --------------------------------------------------------------------- */
+
+/* Selected file in the sidebar: a paper slip tucked into the cover */
+.workspace-drawer .tree-item-self.is-active,
+.workspace-split.mod-left-split .tree-item-self.is-active,
+.nav-file-title.is-active {
+  background-color: var(--fn-paper);
+  color: var(--fn-ink);
+  --icon-color: var(--fn-ink);
+  --nav-item-color-active: var(--fn-ink);
+  --nav-item-color-selected: var(--fn-ink);
+}
+
+/* Scrollbars: thin pencil marks */
+body:not(.is-mobile) ::-webkit-scrollbar-thumb {
+  border-radius: 1px;
+}
+
+@media print {
+  .markdown-preview-view,
+  .markdown-preview-sizer {
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+}
